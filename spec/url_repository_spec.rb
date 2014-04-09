@@ -24,4 +24,12 @@ describe UrlRepository do
     ]
     expect(urls).to match_array(expected_urls)
   end
+
+  it "allows user to find 1 url by id" do
+    @url_repo.create(original_url: 'http://www.google.com')
+    @url_repo.create(original_url: 'http://www.gmail.com')
+    expected_url = {id: 2, original_url: 'http://www.gmail.com', visits: 0}
+
+    expect(@url_repo.find(2)).to eq(expected_url)
+  end
 end

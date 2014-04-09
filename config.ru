@@ -9,3 +9,7 @@ database_url = if !ENV['HEROKU_POSTGRESQL_TEAL_URL'].nil?
                end
 
 DB = Sequel.connect(database_url)
+
+require './url_shortener'
+
+run UrlShortener
