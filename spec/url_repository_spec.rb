@@ -32,4 +32,18 @@ describe UrlRepository do
 
     expect(@url_repo.find(2)).to eq(expected_url)
   end
+
+
+  it "allows user to update url row" do
+    @url_repo.create(original_url: 'http://www.google.com')
+    @url_repo.create(original_url: 'http://www.gmail.com')
+
+    @url_repo.update(1, original_url: 'http://www.aol.com')
+
+    expected_urls = [
+        {id: 1, original_url: 'http://www.aol.com', visits: 0},
+        {id: 2, original_url: 'http://www.gmail.com', visits: 0}
+    ]
+    expect(@url_repo.all).to match_array(expected_urls)
+  end
 end

@@ -14,5 +14,9 @@ class UrlRepository
   def find(id)
     @urls_table.where(id: id).first
   end
+
+  def update(id, url_original)
+    @urls_table.where(id: id).update(url_original)
+  end
 end
 
