@@ -8,7 +8,7 @@ database_url = if !ENV['HEROKU_POSTGRESQL_TEAL_URL'].nil?
                  'postgres://gschool_user:password@localhost/url_shortener_development'
                end
 
-DB = Sequel.connect(database_url)
+DB = Sequel.connect('postgres://gschool_user:password@localhost/url_shortener_development')
 
 require './url_shortener'
 

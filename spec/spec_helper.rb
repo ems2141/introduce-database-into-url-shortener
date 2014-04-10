@@ -1,4 +1,7 @@
 ENV['RACK_ENV'] = 'test'
+require 'sequel'
+
+DB = Sequel.connect('postgres://gschool_user:password@localhost/url_shortener_test')
 
 RSpec.configure do |config|
   config.order = 'random'

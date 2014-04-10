@@ -1,16 +1,16 @@
 require './url_repository'
 require 'sequel'
+require 'spec_helper'
 
 describe UrlRepository do
 
   before do
-    db = Sequel.connect('postgres://gschool_user:password@localhost/urls_test')
-    db.create_table! :urls do
+    DB.create_table! :urls do
       primary_key :id
       String :original_url
       Integer :visits, default: 0
     end
-    @url_repo = UrlRepository.new(db)
+    @url_repo = UrlRepository.new(DB)
   end
 
   it "should store URLs" do

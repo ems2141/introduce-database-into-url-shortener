@@ -1,26 +1,28 @@
 require 'sinatra/base'
+require './url_repository'
 
 class UrlShortener < Sinatra::Application
 
+  def initialize(app=nil)
+    super(app)
+    @urls_table = UrlRepository.new(DB)
+  end
+
   set :public_folder, './public'
 
-  URLS = {}
-
   get '/' do
-    erb :index, locals:{error: '', url_to_shorten: ''}
+    erb :index, locals: {error: '', url_to_shorten: ''}
   end
 
   post '/shortened_url' do
     url_to_shorten = params['url_to_shorten']
 
     if url_to_shorten.empty?
-      erb :index, locals:{error: 'URL can not be blank', url_to_shorten: url_to_shorten}
+      erb :index, locals: {error: 'URL can not be blank', url_to_shorten: url_to_shorten}
     elsif !is_url?(url_to_shorten)
-      erb :index, locals:{error: 'The text you entered is not a valid URL', url_to_shorten: url_to_shorten}
+      erb :index, locals: {error: 'The text you entered is not a valid URL', url_to_shorten: url_to_shorten}
     else
-      max_id = URLS.keys.max.nil? ? 0 : URLS.keys.max
-      new_id = max_id + 1
-      URLS[new_id] = {original_url: url_to_shorten, visits: 0}
+      new_id = @urls_table.create(:original_url => url_to_shorten)
 
       redirect to("/#{new_id}?stats=true")
     end
@@ -34,16 +36,15 @@ class UrlShortener < Sinatra::Application
   get '/:id' do
     show_stats = params['stats'] == 'true'
     id = params['id'].to_i
-    original_url = URLS[id][:original_url]
-    total_visits = URLS[id][:visits]
-
+    original_url = @urls_table.find(id)[:original_url]
+    total_visits = @urls_table.find(id)[:visits]
     if show_stats
       shortened_url = "#{request.base_url}/#{id}"
 
-      erb :show_shortened_url, locals:{shortened_url: shortened_url, original_url: original_url, total_visits: total_visits}
+      erb :show_shortened_url, locals: {shortened_url: shortened_url, original_url: original_url, total_visits: total_visits}
     else
-      previous_visits = URLS[id][:visits]
-      URLS[id] = {original_url: original_url, visits: previous_visits + 1}
+      previous_visits = @urls_table.find(id)[:visits]
+      @urls_table.update(id, :original_url => original_url, :visits => previous_visits + 1)
       redirect to(original_url)
     end
   end

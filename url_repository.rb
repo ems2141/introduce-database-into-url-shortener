@@ -3,8 +3,8 @@ class UrlRepository
     @urls_table = db[:urls]
   end
 
-  def create(url_original)
-    @urls_table.insert(url_original)
+  def create(attributes)
+    @urls_table.insert(attributes)
   end
 
   def all
@@ -15,8 +15,8 @@ class UrlRepository
     @urls_table.where(id: id).first
   end
 
-  def update(id, url_original)
-    @urls_table.where(id: id).update(url_original)
+  def update(id, attributes)
+    @urls_table.where(id: id).update(attributes)
   end
 end
 
